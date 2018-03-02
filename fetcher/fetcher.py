@@ -5,27 +5,19 @@
 import asyncio
 
 import aiohttp
-
+from commons import attachments_urls, fetch_mail_attach, fetch_url
 from consts import ATTACH_URL
-from commons import fetch_page
 
 
-# for i in mail_urls[1:]:
-    # path = join("/mnt/spamscope/mailboxes/untroubled.org", basename(i))
-    # r = requests.get(i, stream=True)
-    # if r.status_code == 200:
-        # print("Downloaded {!r}".format(i))
-        # with open(path, 'wb') as f:
-            # r.raw.decode_content = True
-            # shutil.copyfileobj(r.raw, f)
-
-async def main():
+async def mails_attach():
     async with aiohttp.ClientSession() as session:
-        urls = await fetch_page(session, ATTACH_URL)
-        print(urls)
+        html = await fetch_url(session, ATTACH_URL)
+        urls = attachments_urls(html)
+        tasks = [fetch_mail_attach(session, url) for url in urls[1:]]
+        return await asyncio.gather(*tasks)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    loop.close()
+    future = asyncio.ensure_future(mails_attach())
+    loop.run_until_complete(future)

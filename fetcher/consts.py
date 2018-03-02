@@ -3,3 +3,5 @@
 
 
 ATTACH_URL = "http://untroubled.org/spam/attachments/"
+BASE_PATH = "/tmp/mails"
+TIMEOUT = 10
