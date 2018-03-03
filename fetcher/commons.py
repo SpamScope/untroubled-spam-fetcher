@@ -17,15 +17,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-
+import async_timeout
 import logging
 import os
 import json
 
 from bs4 import BeautifulSoup
 
-import async_timeout
-from consts import ATTACH_URL
+from .consts import ATTACH_URL
 
 log = logging.getLogger(__name__)
 

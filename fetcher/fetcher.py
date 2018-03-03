@@ -22,17 +22,18 @@ import asyncio
 import logging
 import os
 import sys
+from collections import ChainMap
 
 import aiohttp
-from commons import (
+
+from .commons import (
     attachments_urls,
     fetch_mail_attach,
     fetch_url,
     get_new_attach_urls
 )
-from consts import ATTACH_URL, __defaults__
-from collections import ChainMap
-from args import get_args
+from .consts import ATTACH_URL, __defaults__
+from .args import get_args
 
 
 log = logging.getLogger()

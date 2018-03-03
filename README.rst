@@ -24,7 +24,7 @@ Command line has the priority.
 
 ::
 
-    usage: fetcher.py [-h] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
+    usage: untroubled-spam-fetcher [-h] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                       [-c UNTROUBLED_CACHE_PATH] [-s UNTROUBLED_STORE_PATH] [-v]
 
     Untroubled Fetcher
@@ -53,10 +53,15 @@ Installation
 ::
 
     $ git clone https://github.com/SpamScope/untroubled-spam-fetcher.git
+    $ cd virtualenv -p python3 venv
+    $ source venv/bin/activate
+    $ python setup.py install
 
 Usage
 -----
 
+untroubled-spam-getter only works with Python 3.
+
 ::
 
-    $ python3 fetcher/fetcher.py
+    $ untroubled-spam-fetcher
