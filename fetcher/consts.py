@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
 ATTACH_URL = "http://untroubled.org/spam/attachments/"
-BASE_PATH = "/tmp/mails"
+STORE_PATH = "/tmp/mails"
 TIMEOUT = 10
