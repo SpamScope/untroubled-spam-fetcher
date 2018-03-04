@@ -27,12 +27,13 @@ from collections import ChainMap
 import aiohttp
 
 from .commons import (
-    attachments_urls,
+    fetch_mail_archive,
     fetch_mail_attach,
     fetch_url,
-    get_new_attach_urls
+    get_new_attach_urls,
+    urls_to_fetch,
 )
-from .consts import ATTACH_URL, __defaults__
+from .consts import ATTACH_URL, MAILS_URL, __defaults__
 from .args import get_args
 
 
@@ -57,27 +58,63 @@ def main():
 
     # asyncio loop
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(mails_attach(options))
-    loop.close()
+
+    try:
+        loop.create_task(mails_attach(options))
+        loop.create_task(mails(options))
+        loop.run_forever()
+    except KeyboardInterrupt:
+        log.info("Exit from asyncio loop")
+    finally:
+        log.info("Asyncio loop closed")
+        loop.close()
 
 
 async def mails_attach(options):
     store_path = options["UNTROUBLED_STORE_PATH"]
     cache_path = options["UNTROUBLED_CACHE_PATH"]
     timeout = options["UNTROUBLED_TIMEOUT"]
+    wait_sec = int(options["UNTROUBLED_WAIT_TIME"])
 
     async with aiohttp.ClientSession() as session:
-        html = await fetch_url(session, ATTACH_URL, timeout)
-        log.debug("Got attachments url {!r}".format(ATTACH_URL))
-        urls = attachments_urls(html)
-        log.debug("urls in attachments page {}".format(len(urls)))
-        urls = get_new_attach_urls(urls, cache_path)
-        tasks = [fetch_mail_attach(
-            store_path,
-            session,
-            url,
-            timeout) for url in urls]
-        return await asyncio.gather(*tasks)
+        while True:
+            html = await fetch_url(session, ATTACH_URL, timeout)
+            log.debug("Got attachments url {!r}".format(ATTACH_URL))
+            urls = urls_to_fetch(html, ATTACH_URL)
+            log.debug("urls in attachments page {}".format(len(urls)))
+            urls = get_new_attach_urls(urls, cache_path)
+            tasks = [fetch_mail_attach(
+                store_path,
+                session,
+                url,
+                timeout) for url in urls]
+            await asyncio.gather(*tasks)
+            log.debug("Waiting for {} seconds in mail_attach".format(wait_sec))
+            await asyncio.sleep(wait_sec)
+
+
+async def mails(options):
+    store_path = options["UNTROUBLED_STORE_PATH"]
+    cache_path = options["UNTROUBLED_CACHE_PATH"]
+    timeout = options["UNTROUBLED_TIMEOUT"]
+    wait_sec = int(options["UNTROUBLED_WAIT_TIME"])
+    months = int(options["UNTROUBLED_MONTHS"])
+
+    async with aiohttp.ClientSession() as session:
+        while True:
+            html = await fetch_url(session, MAILS_URL, timeout)
+            log.debug("Got main page {!r}".format(MAILS_URL))
+            urls = urls_to_fetch(html, MAILS_URL)[-(2 + months):-1]
+            log.debug("Getting {} archive from Untroubled".format(len(urls)))
+            tasks = [fetch_mail_archive(
+                cache_path,
+                store_path,
+                session,
+                url,
+                timeout) for url in urls]
+            await asyncio.gather(*tasks)
+            log.debug("Waiting for {} seconds in mails".format(wait_sec))
+            await asyncio.sleep(wait_sec)
 
 
 if __name__ == '__main__':

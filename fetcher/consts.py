@@ -19,9 +19,12 @@ limitations under the License.
 
 
 ATTACH_URL = "http://untroubled.org/spam/attachments/"
+MAILS_URL = "http://untroubled.org/spam/"
 
 __defaults__ = {
-    "UNTROUBLED_TIMEOUT": 10,
+    "UNTROUBLED_TIMEOUT": 20,
     "UNTROUBLED_CACHE_PATH": "/tmp",
     "UNTROUBLED_STORE_PATH": "/tmp",
+    "UNTROUBLED_WAIT_TIME": 5,
+    "UNTROUBLED_MONTHS": 1,
 }

@@ -6,4 +6,5 @@
 *.pyc
 build/
 dist/
+untroubled_spam_fetcher.egg-info/
 venv
