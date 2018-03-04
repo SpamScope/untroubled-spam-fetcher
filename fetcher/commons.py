@@ -19,6 +19,7 @@ limitations under the License.
 
 
 import async_timeout
+import asyncio
 import hashlib
 import json
 import logging
@@ -55,7 +56,9 @@ async def fetch_url(session, url, timeout):
 async def fetch_mail_attach(store_path, session, url, timeout):
     p = os.path.join(store_path, os.path.basename(url))
     response = await fetch_url(session, url, timeout)
-    save_mail(response, p)
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, save_mail, response, p)
+    return url
 
 
 async def fetch_mail_archive(cache_path, store_path, session, url, timeout):
@@ -69,16 +72,40 @@ async def fetch_mail_archive(cache_path, store_path, session, url, timeout):
 
     if not os.path.exists(cache_md5):
         log.info("New archive mails. Name: {}, md5: {}".format(filename, md5))
+
         temp = tempfile.mkdtemp(prefix="untroubled_")
-        log.debug("Temporary folder for mail archive: {}".format(temp))
         file_7z = os.path.join(temp, filename)
-        save_mail(response, file_7z)
-        log.debug("7z file in {!r}".format(file_7z))
-        unzip(file_7z, temp)
-        move_mails(temp, store_path, cache)
-        shutil.rmtree(temp)
-        open(cache_md5, "w").close()
-        log.debug("New cache file: {}".format(cache_md5))
+        log.debug("Temporary folder for mail archive {!r}: {}".format(
+            filename, temp))
+
+        # New thread for blocking functions
+        loop = asyncio.get_event_loop()
+        loop.run_in_executor(
+            None, filesystem_operations,
+            response,
+            file_7z,
+            temp,
+            store_path,
+            cache,
+            cache_md5)
+
+        return url
+
+
+def filesystem_operations(
+    response,
+    file_7z,
+    temp,
+    store_path,
+    cache,
+    cache_md5
+):
+    save_mail(response, file_7z)
+    unzip(file_7z, temp)
+    move_mails(temp, store_path, cache)
+    shutil.rmtree(temp)
+    open(cache_md5, "w").close()
+    log.debug("New cache file: {}".format(cache_md5))
 
 
 def save_mail(data, path):
@@ -138,7 +165,7 @@ def move_mails(mails_path, store_path, cache_file):
             mails.append(name)
 
             if name not in cache:
-                log.info("New name found: {!r}".format(name))
+                log.debug("New mail found: {!r}".format(name))
                 try:
                     shutil.move(os.path.join(path, name), store_path)
                 except shutil.Error:

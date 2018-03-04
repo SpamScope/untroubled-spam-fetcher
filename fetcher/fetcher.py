@@ -65,21 +65,28 @@ def main():
     # asyncio loop
     loop = asyncio.get_event_loop()
 
-    try:
-        if daemon:
+    if daemon:
+        try:
             loop.create_task(mails_attach(options))
             loop.create_task(mails(options))
             loop.run_forever()
-        else:
-            tasks = asyncio.gather(
-                mails_attach(options),
-                mails(options))
-            loop.run_until_complete(tasks)
-    except KeyboardInterrupt:
-        log.info("Exit from asyncio loop")
-    finally:
-        log.info("Asyncio loop closed")
-        loop.close()
+        except KeyboardInterrupt:
+            log.info("Exit from asyncio loop")
+        finally:
+            log.info("Asyncio loop closed")
+            loop.close()
+    else:
+        future = asyncio.ensure_future(run(options))
+        loop.run_until_complete(future)
+        if loop.is_running():
+            loop.close()
+
+
+async def run(options):
+    tasks = []
+    for i in (mails_attach(options), mails(options)):
+        tasks.append(asyncio.ensure_future(i))
+    return await asyncio.gather(*tasks)
 
 
 async def mails_attach(options):
@@ -92,7 +99,6 @@ async def mails_attach(options):
     async with aiohttp.ClientSession() as session:
         while True:
             html = await fetch_url(session, ATTACH_URL, timeout)
-            log.debug("Got attachments url {!r}".format(ATTACH_URL))
             urls = urls_to_fetch(html, ATTACH_URL)
             log.debug("urls in attachments page {}".format(len(urls)))
             urls = get_new_attach_urls(urls, cache_path)
