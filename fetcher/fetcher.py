@@ -53,7 +53,8 @@ def main():
     # Logging
     log.setLevel(logging.DEBUG)
     formatter = logging.Formatter(
-        "%(asctime)s | %(name)s | %(levelname)s | %(message)s")
+        ("%(asctime)s | %(process)d | %(thread)d | "
+         "%(name)s | %(levelname)s | %(message)s"))
 
     # stdout log
     stdout = logging.StreamHandler(sys.stdout)
