@@ -1,3 +1,5 @@
+|PyPI version|
+
 untroubled-spam-getter
 ======================
 
@@ -89,3 +91,6 @@ Usage
 In this case runs as daemon, with logging in debug mode, uses
 ``/tmp/cache`` as cache folder and ``/tmp/mails`` as folder where stores
 the mails.
+
+.. |PyPI version| image:: https://badge.fury.io/py/untroubled-spam-fetcher.svg
+   :target: https://badge.fury.io/py/untroubled-spam-fetcher
