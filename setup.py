@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2017 Fedele Mantuano (https://www.linkedin.com/in/fmantuano/)
+Copyright 2018 Fedele Mantuano (https://www.linkedin.com/in/fmantuano/)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,41 +24,40 @@ from setuptools import setup
 
 current = os.path.realpath(os.path.dirname(__file__))
 
-with open(os.path.join(current, 'README')) as f:
+with open(os.path.join(current, 'README.rst')) as f:
     long_description = f.read().strip()
 
 with open(os.path.join(current, 'requirements.txt')) as f:
     requires = f.read().splitlines()
 
 __version__ = runpy.run_path(
-    os.path.join(current, "mailparser", "version.py"))["__version__"]
+    os.path.join(current, "fetcher", "version.py"))["__version__"]
 
 
 setup(
-    name='untroubled-spam-getter',
-    description="",
+    name='untroubled-spam-fetcher',
+    description="This tool gets the Untroubled spam mails",
     license="Apache License, Version 2.0",
-    url="",
+    url="https://github.com/SpamScope/untroubled-spam-fetcher",
     long_description=long_description,
     version=__version__,
     author="Fedele Mantuano",
     author_email="mantuano.fedele@gmail.com",
     maintainer="Fedele Mantuano",
     maintainer_email='mantuano.fedele@gmail.com',
-    packages=["core"],
+    packages=["fetcher"],
     platforms=["Linux"],
-    keywords=['mail', 'email', 'getter'],
+    keywords=['mail', 'email', 'fetcher', 'untroubled'],
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.0",
-        "Programming Language :: Python :: 3.1",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
     ],
     install_requires=requires,
+    entry_points={'console_scripts': [
+        'untroubled-spam-fetcher = fetcher.fetcher:main']},
 )
