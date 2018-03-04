@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/untroubled-spam-fetcher.svg)](https://badge.fury.io/py/untroubled-spam-fetcher)
+
 # untroubled-spam-getter
 
 
