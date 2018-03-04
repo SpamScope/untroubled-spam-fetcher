@@ -1,3 +1,4 @@
 aiohttp
 beautifulsoup4
 flake8
+patool
