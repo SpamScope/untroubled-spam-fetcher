@@ -23,8 +23,8 @@ MAILS_URL = "http://untroubled.org/spam/"
 
 __defaults__ = {
     "UNTROUBLED_TIMEOUT": 20,
-    "UNTROUBLED_CACHE_PATH": "/tmp",
-    "UNTROUBLED_STORE_PATH": "/tmp",
-    "UNTROUBLED_WAIT_TIME": 5,
+    "UNTROUBLED_CACHE_PATH": "/var/tmp",
+    "UNTROUBLED_STORE_PATH": "/tmp/untroubled_mails",
+    "UNTROUBLED_WAIT_TIME": 3600,
     "UNTROUBLED_MONTHS": 1,
 }

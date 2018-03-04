@@ -31,6 +31,7 @@ from .commons import (
     fetch_mail_attach,
     fetch_url,
     get_new_attach_urls,
+    make_worker_folders,
     urls_to_fetch,
 )
 from .consts import ATTACH_URL, MAILS_URL, __defaults__
@@ -44,6 +45,10 @@ def main():
     # all options
     args = {k: v for k, v in vars(get_args()).items() if v}
     options = ChainMap(args, os.environ, __defaults__)
+    daemon = bool(options.get("daemon", False))
+
+    # make Untroubled worker folder
+    make_worker_folders(options)
 
     # Logging
     log.setLevel(logging.DEBUG)
@@ -60,9 +65,15 @@ def main():
     loop = asyncio.get_event_loop()
 
     try:
-        loop.create_task(mails_attach(options))
-        loop.create_task(mails(options))
-        loop.run_forever()
+        if daemon:
+            loop.create_task(mails_attach(options))
+            loop.create_task(mails(options))
+            loop.run_forever()
+        else:
+            tasks = asyncio.gather(
+                mails_attach(options),
+                mails(options))
+            loop.run_until_complete(tasks)
     except KeyboardInterrupt:
         log.info("Exit from asyncio loop")
     finally:
@@ -73,8 +84,9 @@ def main():
 async def mails_attach(options):
     store_path = options["UNTROUBLED_STORE_PATH"]
     cache_path = options["UNTROUBLED_CACHE_PATH"]
-    timeout = options["UNTROUBLED_TIMEOUT"]
+    timeout = int(options["UNTROUBLED_TIMEOUT"])
     wait_sec = int(options["UNTROUBLED_WAIT_TIME"])
+    daemon = bool(options.get("daemon", False))
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -88,17 +100,24 @@ async def mails_attach(options):
                 session,
                 url,
                 timeout) for url in urls]
-            await asyncio.gather(*tasks)
-            log.debug("Waiting for {} seconds in mail_attach".format(wait_sec))
-            await asyncio.sleep(wait_sec)
+
+            res = await asyncio.gather(*tasks)
+
+            if daemon:
+                log.debug("Waiting for {} seconds in mail_attach".format(
+                    wait_sec))
+                await asyncio.sleep(wait_sec)
+            else:
+                return res
 
 
 async def mails(options):
     store_path = options["UNTROUBLED_STORE_PATH"]
     cache_path = options["UNTROUBLED_CACHE_PATH"]
-    timeout = options["UNTROUBLED_TIMEOUT"]
+    timeout = int(options["UNTROUBLED_TIMEOUT"])
     wait_sec = int(options["UNTROUBLED_WAIT_TIME"])
     months = int(options["UNTROUBLED_MONTHS"])
+    daemon = bool(options.get("daemon", False))
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -112,9 +131,14 @@ async def mails(options):
                 session,
                 url,
                 timeout) for url in urls]
-            await asyncio.gather(*tasks)
-            log.debug("Waiting for {} seconds in mails".format(wait_sec))
-            await asyncio.sleep(wait_sec)
+
+            res = await asyncio.gather(*tasks)
+
+            if daemon:
+                log.debug("Waiting for {} seconds in mails".format(wait_sec))
+                await asyncio.sleep(wait_sec)
+            else:
+                return res
 
 
 if __name__ == '__main__':

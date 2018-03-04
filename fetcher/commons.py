@@ -155,3 +155,14 @@ def load_mails_cache(cache_file):
 
     except FileNotFoundError:
         return []
+
+
+def make_worker_folders(options):
+    folders = [
+        options["UNTROUBLED_STORE_PATH"],
+        options["UNTROUBLED_CACHE_PATH"]]
+
+    for i in folders:
+        if not os.path.exists(i):
+            os.makedirs(i)
+            log.debug("Made worker folder {!r}".format(i))

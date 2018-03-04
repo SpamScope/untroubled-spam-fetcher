@@ -5,7 +5,7 @@ Overview
 --------
 
 This tool gets the `Untroubled <http://untroubled.org/spam/>`__ spam
-mails.
+mails. You can use this tool as daemon or not.
 
 Description
 -----------
@@ -15,17 +15,29 @@ filesystem. You can set the followings variables to change the defaults:
 
 ::
 
-    "UNTROUBLED_TIMEOUT": 10,
-    "UNTROUBLED_CACHE_PATH": "/tmp",
-    "UNTROUBLED_STORE_PATH": "/tmp",
+    "UNTROUBLED_TIMEOUT": 20,
+    "UNTROUBLED_CACHE_PATH": "/var/tmp",
+    "UNTROUBLED_STORE_PATH": "/tmp/untroubled_mails",
+    "UNTROUBLED_WAIT_TIME": 3600,
+    "UNTROUBLED_MONTHS": 1,
+
+``UNTROUBLED_TIMEOUT``: timeout HTTP connections.
+``UNTROUBLED_CACHE_PATH``: path where store the cache files useful to
+get only mails delta. ``UNTROUBLED_STORE_PATH``: path where store the
+mails. ``UNTROUBLED_WAIT_TIME``: if daemon is enabled wait time seconds
+before gets new mails. ``UNTROUBLED_MONTHS``: how many months archive
+you want get.
 
 You can set environment variables or change them from command line.
 Command line has the priority.
 
 ::
 
-    usage: untroubled-spam-fetcher [-h] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
-                      [-c UNTROUBLED_CACHE_PATH] [-s UNTROUBLED_STORE_PATH] [-v]
+     $ untroubled-spam-fetcher -h
+    usage: fetcher.py [-h] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
+                      [-c UNTROUBLED_CACHE_PATH] [-s UNTROUBLED_STORE_PATH]
+                      [-m UNTROUBLED_MONTHS] [-d] [-w UNTROUBLED_WAIT_TIME]
+                      [-t UNTROUBLED_TIMEOUT] [-v]
 
     Untroubled Fetcher
 
@@ -37,6 +49,14 @@ Command line has the priority.
                             Cache path to store downloaded history (default: None)
       -s UNTROUBLED_STORE_PATH, --store-path UNTROUBLED_STORE_PATH
                             Store path to store emails (default: None)
+      -m UNTROUBLED_MONTHS, --months UNTROUBLED_MONTHS
+                            Months mails archive to get (no more 12) (default:
+                            None)
+      -d, --daemon          Start in daemon mode (default: False)
+      -w UNTROUBLED_WAIT_TIME, --wait-time UNTROUBLED_WAIT_TIME
+                            Seconds to wait between two fetch (default: None)
+      -t UNTROUBLED_TIMEOUT, --timeout UNTROUBLED_TIMEOUT
+                            HTTP timeout connection in seconds (default: None)
       -v, --version         show program's version number and exit
 
 Authors
@@ -60,8 +80,12 @@ Installation
 Usage
 -----
 
-untroubled-spam-getter only works with Python 3.
+``untroubled-spam-fetcher`` only works with Python 3.
 
 ::
 
-    $ untroubled-spam-fetcher
+    $ untroubled-spam-fetcher -l DEBUG -c /tmp/cache -s /tmp/mails -d
+
+In this case runs as daemon, with logging in debug mode, uses
+``/tmp/cache`` as cache folder and ``/tmp/mails`` as folder where stores
+the mails.

@@ -62,6 +62,34 @@ def get_args():
         dest="UNTROUBLED_STORE_PATH")
 
     parser.add_argument(
+        "-m",
+        "--months",
+        type=int,
+        help="Months mails archive to get (no more 12)",
+        dest="UNTROUBLED_MONTHS")
+
+    parser.add_argument(
+        "-d",
+        "--daemon",
+        dest="daemon",
+        action="store_true",
+        help="Start in daemon mode")
+
+    parser.add_argument(
+        "-w",
+        "--wait-time",
+        type=int,
+        help="Seconds to wait between two fetch",
+        dest="UNTROUBLED_WAIT_TIME")
+
+    parser.add_argument(
+        "-t",
+        "--timeout",
+        type=int,
+        help="HTTP timeout connection in seconds",
+        dest="UNTROUBLED_TIMEOUT")
+
+    parser.add_argument(
         '-v',
         '--version',
         action='version',
