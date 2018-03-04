@@ -18,13 +18,21 @@ limitations under the License.
 """
 
 
-ATTACH_URL = "http://untroubled.org/spam/attachments/"
-MAILS_URL = "http://untroubled.org/spam/"
+__all__ = (
+    "UntroubledError",
+    "UntroubledMonthsError",
+)
 
-__defaults__ = {
-    "UNTROUBLED_TIMEOUT": 20,
-    "UNTROUBLED_CACHE_PATH": "/var/tmp",
-    "UNTROUBLED_STORE_PATH": "/tmp/untroubled_mails",
-    "UNTROUBLED_WAIT_TIME": 3600,
-    "UNTROUBLED_MONTHS": 0,
-}
+
+class UntroubledError(Exception):
+    """
+    Base Untroubled Exception
+    """
+    pass
+
+
+class UntroubledMonthsError(UntroubledError):
+    """
+    Raised when the number of months is upper than 12
+    """
+    pass

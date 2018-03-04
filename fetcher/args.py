@@ -64,7 +64,6 @@ def get_args():
     parser.add_argument(
         "-m",
         "--months",
-        type=int,
         help="Months mails archive to get (no more 12)",
         dest="UNTROUBLED_MONTHS")
 

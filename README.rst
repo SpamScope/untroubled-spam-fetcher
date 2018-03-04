@@ -19,14 +19,14 @@ filesystem. You can set the followings variables to change the defaults:
     "UNTROUBLED_CACHE_PATH": "/var/tmp",
     "UNTROUBLED_STORE_PATH": "/tmp/untroubled_mails",
     "UNTROUBLED_WAIT_TIME": 3600,
-    "UNTROUBLED_MONTHS": 1,
+    "UNTROUBLED_MONTHS": 0,
 
 ``UNTROUBLED_TIMEOUT``: timeout HTTP connections.
 ``UNTROUBLED_CACHE_PATH``: path where store the cache files useful to
 get only mails delta. ``UNTROUBLED_STORE_PATH``: path where store the
 mails. ``UNTROUBLED_WAIT_TIME``: if daemon is enabled wait time seconds
 before gets new mails. ``UNTROUBLED_MONTHS``: how many months archive
-you want get.
+you want get. 0 means only last month.
 
 You can set environment variables or change them from command line.
 Command line has the priority.

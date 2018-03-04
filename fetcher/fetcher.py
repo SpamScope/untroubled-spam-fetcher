@@ -36,6 +36,7 @@ from .commons import (
 )
 from .consts import ATTACH_URL, MAILS_URL, __defaults__
 from .args import get_args
+from .exceptions import UntroubledMonthsError
 
 
 log = logging.getLogger()
@@ -46,6 +47,14 @@ def main():
     args = {k: v for k, v in vars(get_args()).items() if v}
     options = ChainMap(args, os.environ, __defaults__)
     daemon = bool(options.get("daemon", False))
+    months = int(options["UNTROUBLED_MONTHS"])
+
+    if daemon and months != 0:
+        raise UntroubledMonthsError(
+            "In daemon mode you can fetch only last month [-m 0]")
+
+    if months > 12:
+        raise UntroubledMonthsError("Number of months upper that 12")
 
     # make Untroubled worker folder
     make_worker_folders(options)
