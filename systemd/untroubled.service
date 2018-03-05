@@ -1,0 +1,11 @@
+[Unit]
+Description = Start Untroubled fetcher daemon
+After = network.target
+
+[Service]
+WorkingDirectory = /opt/untroubled-spam-fetcher/
+Restart = always
+ExecStart = /opt/untroubled-spam-fetcher/venv/bin/untroubled-spam-fetcher -c /var/tmp -s /mnt/spamscope/mailboxes/untroubled.org -d
+
+[Install]
+WantedBy = multi-user.target

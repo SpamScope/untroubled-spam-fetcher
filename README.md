@@ -68,8 +68,9 @@ Fedele Mantuano (**Linkedin**: https://www.linkedin.com/in/fmantuano/)
 ## Installation
 
 ```
+$ cd /opt
 $ git clone https://github.com/SpamScope/untroubled-spam-fetcher.git
-$ cd virtualenv -p python3 venv
+$ virtualenv -p python3 venv
 $ source venv/bin/activate
 $ python setup.py install
 ```
@@ -77,9 +78,18 @@ $ python setup.py install
 or
 
 ```
-$ cd virtualenv -p python3 venv
+$ cd /opt
+$ virtualenv -p python3 venv
 $ source venv/bin/activate
 $ pip install untroubled-spam-fetcher
+```
+
+To install `untroubled systemd service`:
+
+```
+$ cp systemd/untroubled.service /lib/systemd/system
+$ systemctl enable untroubled.service
+$ systemctl start untroubled.service
 ```
 
 
