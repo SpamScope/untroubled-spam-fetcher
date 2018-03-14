@@ -1,0 +1,64 @@
+---
+sudo: required
+
+services:
+    - docker
+
+language: python
+
+python:
+    - "3.6"
+
+env:
+    - UNTROUBLED_CACHE_PATH=/tmp
+      UNTROUBLED_STORE_PATH=/tmp/
+
+before_install:
+
+    # Build untroubled-spam-fetcher
+    - if [ "$TRAVIS_BRANCH" == "master" ]; then
+        cd docker && docker build -t $DOCKER_USERNAME/untroubled-spam-fetcher . && cd -;
+        docker run --rm -it $DOCKER_USERNAME/untroubled-spam-fetcher -h;
+        docker run --rm -it $DOCKER_USERNAME/untroubled-spam-fetcher -v;
+      fi
+
+    - if [ "$TRAVIS_BRANCH" == "develop" ]; then
+        cd docker && docker build -t $DOCKER_USERNAME/untroubled-spam-fetcher:develop . && cd -;
+        docker run --rm -it $DOCKER_USERNAME/untroubled-spam-fetcher:develop -h;
+        docker run --rm -it $DOCKER_USERNAME/untroubled-spam-fetcher:develop -v;
+      fi
+
+# command to install dependencies
+install:
+    - python setup.py install
+
+# command to run tests
+script:
+    - untroubled-spam-fetcher -h
+    - untroubled-spam-fetcher -v
+
+deploy:
+    provider: pypi
+    user: fmantuano
+    password:
+        secure: "iYTTvALsqmkoV+MPOENCeMykhREkp0QWITVkWY6zukZh2TwNKzNCuq+NZTd6EtDrryn/oUs3Z/r1LmFIDjLg6mbJZKzrtkePCj2bbC1Vq81tSl2Kc1lKbDbvWS9epjqCgX7Sgt64d16TH9hmfdaxL14/IEGzLB6qmVeFcxqMJjXbCr0RfGVZJEjXnL5R9mHcZLleXT8eLrknkeOIGl5cK7+9cORShSBlmz8TmDpQdIHsUJO17CWIm3g6knOF0MHfRlY9T6aLae3+NZcQYjat/TT7GaEMB+cC6RcJ3xsbPcrzX/TtouXRufW2EWICquN0MfaYK+8nF77ASqVDJ0vKfIMLyjCh8zzlP11pcFi8TcKJm6DUEqadiQiX9Ck44GJvPmNKR13MYl/HsgfzmpyeqkepI1f2/ccCJvaUFgG8ICZktNxGzr2HmDSAtPjm4De8ode/MQosUPGD0BWQCPteK+ZNjtuXHjqX3EC9rgxVHjl+gQ1dRzSf0PDHqeV9Nhz0haMTgVn5jTaS8i3ODJ5J4kZXZi6I8Uab0GNNMLzWJGk1rCNuXAXqbEGBp7KQ8D0GL48XY4/69rjux089Gfv+THgNWynXfRHIuFrOI9M7LhLq0JR45+gWqQJEMfDfiFAthNFdnJec53ay4HtypLf0elnTE+CNKD9jjiRLHCLtZag="
+    on:
+        tags: true
+        repo: SpamScope/untroubled-spam-fetcher
+        branch: master
+
+after_success:
+    - if [ "$TRAVIS_BRANCH" == "master" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push $DOCKER_USERNAME/untroubled-spam-fetcher;
+      fi
+
+    - if [ "$TRAVIS_BRANCH" == "develop" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push $DOCKER_USERNAME/untroubled-spam-fetcher:develop;
+      fi
+
+notifications:
+    email: false
+    slack:
+        secure: "ykB3n669BmQj3+Gh/PSEDBGp9wSkcx3nsXsvgzrUje0FXoIrxhDgdKIU1Ln3BQ9howhpxSwaKhR1hOfDUe8sD0fnDmVM3unjxCmcd6IVdM++rg5tI1t5Apq30UwodG81qxfMC5OcS0CdtwjcY1tERW2s88R3efD9HdM7ZYrC1AekATw2GCLDyvrpLU3GQGp5aGgUdHlhnAXxZrJaP8Nq7MczD5SpY81xgkA485undIhPwRXPiF5nSOmO3fdLAEMTxJ8YM/x1mAPxy5Nqd7YuMS7Czkgl3iSnk4YJtzkXGxEp03sMUupmlZWJNH4sIuHCpqO4+SrsaZRpVw7qvS8HtDHVte0zwSrRVcf6PrBbE9mx0MheD4LUmhO4GAL8sLRiCs0PRbEdMmSdkxojf9DGyJGOeSpUiFW2VQiwjB3DbvJ/q3uhp4Wza0P6TLqEllMNt2NPIMqE2MO6TjGhDkIfMOya0LoCKgi8cOaOFaRwT/nSjDGAI8b6XO62E/fFq9DWhXEzeAvr7bMZz5MaCO5wQGNAXZIqZ8ac8jz19N//cZgBz51I9Ja9kXnOus6zyXrvHeIbwwzFnZ0mAVBUEH8x/vw4g3JsK2DxJc4sWB/NqK7bwgeAI9N2rC4ZBThwc1QNaj+or/O4amUJrug5LGvm2rAI2Wkkh8/dd4mMHD7cX5A="

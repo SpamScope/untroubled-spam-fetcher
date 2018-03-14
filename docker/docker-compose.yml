@@ -1,0 +1,11 @@
+version: '2.1'
+
+services:
+
+  fetcher:
+    image: fmantuano/spamscope-untroubled-spam-fetcher
+    command: -l DEBUG -d
+    container_name: fetcher
+    volumes:
+      - /tmp/cache/:/cache
+      - /tmp/mails/:/store
