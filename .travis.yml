@@ -34,7 +34,6 @@ install:
 
 # command to run tests
 script:
-    # Unittests and coverage
     - untroubled-spam-fetcher -h
     - untroubled-spam-fetcher -v
 

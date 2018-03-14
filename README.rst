@@ -1,4 +1,4 @@
-|PyPI version|
+|PyPI version| |Build Status| |image2|
 
 untroubled-spam-getter
 ======================
@@ -110,5 +110,27 @@ In this case runs as daemon, with logging in debug mode, uses
 ``/tmp/cache`` as cache folder and ``/tmp/mails`` as folder where stores
 the mails.
 
+Docker
+------
+
+In the folder ``docker`` there are a ``Dockerfile`` and a
+``docker-compose``.
+
+Example to fetch mail with Docker image:
+
+::
+
+    $ docker run --rm --name fetcher -ti fmantuano/spamscope-untroubled-spam-fetcher -l DEBUG
+
+If you want run a Docker image as daemon use docker-compose:
+
+::
+
+    $ docker-compose up -d
+
 .. |PyPI version| image:: https://badge.fury.io/py/untroubled-spam-fetcher.svg
    :target: https://badge.fury.io/py/untroubled-spam-fetcher
+.. |Build Status| image:: https://travis-ci.org/SpamScope/untroubled-spam-fetcher.svg?branch=develop
+   :target: https://travis-ci.org/SpamScope/untroubled-spam-fetcher
+.. |image2| image:: https://images.microbadger.com/badges/version/fmantuano/untroubled-spam-fetcher:develop.svg
+   :target: https://microbadger.com/images/fmantuano/untroubled-spam-fetcher:develop
